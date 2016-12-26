@@ -4,7 +4,7 @@
   "description": "A minimal Muon application",
   "main": "main.js",
   "scripts": {
-    "start": "start node_modules/electron-prebuilt/dist/brave ."
+    "start": "node setup.js"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
