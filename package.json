@@ -1,12 +1,12 @@
 {
-  "name": "muon-quick-start",
+  "name": "muon-quick",
   "version": "1.0.0",
   "description": "A minimal Muon application",
   "main": "main.js",
   "scripts": {
     "start": "node setup.js"
   },
-  "repository": "https://github.com/jonathansampson/muon-quick",
+  "repository": "https://github.com/brave/muon-quick",
   "keywords": [
     "Muon",
     "quick",
@@ -14,7 +14,7 @@
     "tutorial",
     "demo"
   ],
-  "author": "Jonathan Sampson",
+  "author": "Brave Software",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "brave/electron-prebuilt"
