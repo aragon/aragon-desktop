@@ -1,12 +1,28 @@
-let path = require('path')
-let execFile = require('child_process').execFile
-const commonPath = ['node_modules', 'electron-prebuilt', 'dist']
-const macPath = ['Brave.app', 'Contents', 'MacOS', 'Brave']
-const otherPath = ['brave']
-let muonPath = commonPath
+const path = require('path')
+const spawn = require('child_process').spawn
 
-muonPath = muonPath.concat(process.platform === 'darwin'
- ? macPath
- : otherPath)
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+const options = {
+  env: process.env,
+  stdio: 'inherit',
+  shell: true
+}
+const muon = spawn('electron', [__dirname, ...process.argv.slice(2)], options)
 
-execFile(path.join(...muonPath), ['.'])
+muon.on('error', (err) => {
+  console.error(`could not start electron ${err}`)
+})
+
+muon.on('exit', (code, signal) => {
+  console.log(`process exited with code ${code}`)
+  process.exit(code)
+})
+
+muon.on('SIGTERM', () => {
+  electron.kill('SIGTERM')
+})
+
+muon.on('SIGINT', () => {
+  electron.kill('SIGINT')
+})
+
