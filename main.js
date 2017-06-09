@@ -18,8 +18,12 @@ function createWindow () {
     width: 800, height: 600
   })
 
-  // and load the index.html of the app.
+  // and load brave.com
   mainWindow.loadURL('https://www.brave.com')
+
+  // alternatively, uncomment the following line to load index.html via
+  // 'chrome://brave' to expose additional APIs such as 'chrome.ipcRenderer'
+  //mainWindow.loadURL('chrome://brave/' + __dirname + '/index.html');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
