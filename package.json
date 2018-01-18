@@ -17,6 +17,6 @@
   "author": "Brave Software",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "brave/electron-prebuilt"
+    "electron-prebuilt": "brave/electron-prebuilt"
   }
 }
