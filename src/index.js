@@ -1,4 +1,8 @@
-const {app, protocol, BrowserWindow} = require('electron')
+const {
+  app,
+  protocol,
+  BrowserWindow
+} = require('electron')
 const path = require('path')
 const url = require('url')
 const mime = require('mime-types')
@@ -21,8 +25,19 @@ function getIpfsHash (package) {
     })
 }
 
-let ipfsApi
 let win
+
+function updateStatus (state) {
+  if (win && !win.webContents.isLoading()) {
+    win.webContents.send('status', {
+      state,
+      done: state === 'READY'
+    })
+  }
+}
+
+let ipfsApi
+updateStatus('STARTING_NODE')
 startIPFS()
   .then((daemon) => {
     console.log('node started ok')
@@ -33,12 +48,17 @@ startIPFS()
       daemon.stop()
     })
 
+    updateStatus('FETCH_WRAPPER_HASH')
     return getIpfsHash('aragon.aragonpm.eth')
   }).then((wrapperHash) => {
     console.log('newest wrapper is', wrapperHash)
 
+    updateStatus('PINNING')
+
     return ipfsApi.pin.add(wrapperHash, { recursive: true })
   }).then((files) => {
+    updateStatus('READY')
+
     console.log('pinned', files.length, 'files')
     console.log(files)
     win.loadURL('aragon://aragon.aragonpm.eth/index.html')
@@ -53,7 +73,7 @@ function createWindow () {
     titleBarStyle: 'hiddenInset',
 
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       preload: path.resolve('./src', 'inject-web3.js')
     }
   })

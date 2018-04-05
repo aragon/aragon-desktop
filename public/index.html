@@ -1,5 +1,16 @@
 <body>
-  <h1>loading</h1>
+  <h1 id="status">...</h1>
+  <script type="application/javascript">
+  const {
+    ipcRenderer
+  } = require('electron')
+
+  const statusElement = document.getElementById('status')
+  ipcRenderer.on('status', (evt, status) => {
+    console.log(evt, status)
+    statusElement.innerHTML = status.state
+  })
+  </script>
   <style>
     body {
       background: #fff;
