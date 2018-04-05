@@ -11,11 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "@aragon/apm": "^1.0.0-beta.9",
+    "@aragon/ui": "^0.11.0",
     "debug": "^3.1.0",
     "electron": "^1.8.4",
     "go-ipfs-dep": "^0.4.14",
     "ipfsd-ctl": "^0.31.0",
     "mime-types": "^2.1.18",
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1",
+    "styled-components": "^3.2.5",
     "web3": "^1.0.0-beta.33"
   },
   "devDependencies": {}

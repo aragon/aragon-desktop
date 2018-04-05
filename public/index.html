@@ -1,22 +1,46 @@
 <body>
-  <h1 id="status">...</h1>
+  <div id="app"></div>
+
   <script type="application/javascript">
   const {
     ipcRenderer
   } = require('electron')
+  const React = require('react')
+  const ReactDOM = require('react-dom')
+  const { Text } = require('@aragon/ui')
 
-  const statusElement = document.getElementById('status')
-  ipcRenderer.on('status', (evt, status) => {
-    console.log(evt, status)
-    statusElement.innerHTML = status.state
-  })
-  </script>
-  <style>
-    body {
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  class App extends React.Component {
+    constructor (props) {
+      super(props)
+
+      this.state = {
+        status: null
+      }
     }
-  </style>
+    componentWillMount () {
+      ipcRenderer.on('status', (evt, { status }) => {
+        this.setState({ status })
+      })
+    }
+
+    render () {
+      const status = {
+        STARTING_NODE: 'Starting IPFS node...',
+        FETCH_WRAPPER_HASH: 'Checking latest version...',
+        PINNING: 'Downloading wrapper, hang tight',
+        READY: 'All done!'
+      }[this.state.status]
+
+      return React.createElement(Text, {
+        color: 'white',
+        size: 'xxlarge'
+      }, status || 'Working...')
+    }
+  }
+
+  ReactDOM.render(
+    React.createElement(App),
+    document.getElementById('app')
+  )
+  </script>
 </body>

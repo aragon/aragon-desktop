@@ -28,11 +28,11 @@ function getIpfsHash (package) {
 
 let win
 
-function updateStatus (state) {
+function updateStatus (status) {
   if (win && !win.webContents.isLoading()) {
     win.webContents.send('status', {
-      state,
-      done: state === 'READY'
+      status,
+      done: status === 'READY'
     })
   }
 }
