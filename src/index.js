@@ -3,13 +3,26 @@ const path = require('path')
 const url = require('url')
 const mime = require('mime-types')
 const startIPFS = require('./lib/ipfs')
+const getCurrentContent = require('./lib/content')
 
 protocol.registerStandardSchemes(['aragon'])
 
-// TODO: Get hash from APM
-const WRAPPER_IPFS_HASH = 'QmZx3AA2yHWY5UGZLRxq4qMsPk8EBqBtt3KrJaq3vbGZdc'
+const hashCache = {}
+function getIpfsHash (package) {
+  if (hashCache[package]) {
+    return Promise.resolve(hashCache[package])
+  }
+
+  return getCurrentContent('aragon.aragonpm.eth')
+    .then(({ location }) => {
+      hashCache[package] = location
+      
+      return location
+    })
+}
 
 let ipfsApi
+let win
 startIPFS()
   .then((daemon) => {
     console.log('node started ok')
@@ -19,20 +32,18 @@ startIPFS()
       console.log('shutting down daemon')
       daemon.stop()
     })
-    return ipfsApi.pin.add(WRAPPER_IPFS_HASH, { recursive: true })
+
+    return getIpfsHash('aragon.aragonpm.eth')
+  }).then((wrapperHash) => {
+    console.log('newest wrapper is', wrapperHash)
+
+    return ipfsApi.pin.add(wrapperHash, { recursive: true })
   }).then((files) => {
     console.log('pinned', files.length, 'files')
     console.log(files)
-
-    if (app.isReady()) {
-      createWindow()
-    } else {
-      app.once('ready', createWindow)
-    }
+    win.loadURL('aragon://aragon.aragonpm.eth/index.html')
   })
   .catch(console.error)
-
-let win
 
 function createWindow () {
   win = new BrowserWindow({
@@ -49,21 +60,29 @@ function createWindow () {
 
   protocol.registerStreamProtocol('aragon', (req, cb) => {
     const parsedUrl = url.parse(req.url)
+    const package = url.host
     const file = parsedUrl.path
 
-    cb({
-      statusCode: 200,
-      headers: {
-        'Content-Type': mime.lookup(file)
-      },
-      data: ipfsApi.files.catReadableStream(WRAPPER_IPFS_HASH + file)
-    })
+    getIpfsHash(package)
+      .then((packageIpfsHash) => cb({
+        statusCode: 200,
+        headers: {
+          'Content-Type': mime.lookup(file)
+        },
+        data: ipfsApi.files.catReadableStream(packageIpfsHash + file)
+      }))
   }, (err) => {
     if (err) console.error(err)
     if (!err) console.log('protocol registered')
   })
 
-  win.loadURL('aragon://wrapper/index.html')
+  win.loadURL(
+    url.format({
+      protocol: 'file',
+      slashes: true,
+      pathname: path.resolve('public', 'index.html')
+    })
+  )
 
   win.once('ready-to-show', () => {
     win.show()
@@ -91,3 +110,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+app.once('ready', createWindow)

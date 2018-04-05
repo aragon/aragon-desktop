@@ -2,9 +2,9 @@
   "name": "@aragon/shell",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "electron src/"
+    "start": "electron ."
   },
   "keywords": [],
   "author": "",
