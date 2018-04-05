@@ -1,0 +1,20 @@
+{
+  "name": "@aragon/shell",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron src/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aragon/apm": "^1.0.0-beta.9",
+    "electron": "^1.8.4",
+    "go-ipfs-dep": "^0.4.14",
+    "ipfsd-ctl": "^0.31.0",
+    "mime-types": "^2.1.18",
+    "web3": "^1.0.0-beta.33"
+  }
+}
