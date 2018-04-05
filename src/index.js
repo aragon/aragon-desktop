@@ -8,6 +8,7 @@ const url = require('url')
 const mime = require('mime-types')
 const startIPFS = require('./lib/ipfs')
 const getCurrentContent = require('./lib/content')
+const debug = require('debug')('shell')
 
 protocol.registerStandardSchemes(['aragon'])
 
@@ -36,22 +37,28 @@ function updateStatus (state) {
   }
 }
 
+function handleError (err) {
+  updateStatus('ERROR')
+
+  debug(err)
+}
+
 let ipfsApi
 updateStatus('STARTING_NODE')
 startIPFS()
   .then((daemon) => {
-    console.log('node started ok')
+    debug('node started ok')
 
     ipfsApi = daemon.api
     app.once('will-quit', () => {
-      console.log('shutting down daemon')
+      debug('shutting down daemon')
       daemon.stop()
     })
 
     updateStatus('FETCH_WRAPPER_HASH')
     return getIpfsHash('aragon.aragonpm.eth')
   }).then((wrapperHash) => {
-    console.log('newest wrapper is', wrapperHash)
+    debug('newest wrapper is', wrapperHash)
 
     updateStatus('PINNING')
 
@@ -59,11 +66,11 @@ startIPFS()
   }).then((files) => {
     updateStatus('READY')
 
-    console.log('pinned', files.length, 'files')
-    console.log(files)
+    debug('pinned', files.length, 'files')
+    debug(files)
     win.loadURL('aragon://aragon.aragonpm.eth/index.html')
   })
-  .catch(console.error)
+  .catch(handleError)
 
 function createWindow () {
   win = new BrowserWindow({
@@ -92,8 +99,8 @@ function createWindow () {
         data: ipfsApi.files.catReadableStream(packageIpfsHash + file)
       }))
   }, (err) => {
-    if (err) console.error(err)
-    if (!err) console.log('protocol registered')
+    if (err) handleError(err)
+    if (!err) debug('protocol registered')
   })
 
   win.loadURL(
