@@ -20,7 +20,6 @@
     "@aragon/apm": "^2.0.2",
     "electron-store": "^2.0.0",
     "electron-window-state": "^5.0.1",
-    "eth-provider": "0.0.10",
     "web3": "^1.0.0-beta.34",
     "web3-providers-ws": "^1.0.0-beta.34"
   }
