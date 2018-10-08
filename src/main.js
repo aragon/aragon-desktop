@@ -3,15 +3,16 @@ const windowStateKeeper = require('electron-window-state')
 
 const { isPortTaken } = require('./lib/util')
 const { startIPFSNode } = require('./lib/ipfs-node')
-const { registerIPFSProtocol } = require('./lib/ipfs-protocol')
+const { getLatestFromRepo } = require('./lib/aragon-core')
 
 async function start () {
   const running = await isPortTaken(5001)
   if (!running) {
     await startIPFSNode()
   }
-  registerIPFSProtocol()
-  mainWindow.loadURL(`apm://aragon.aragonpm.eth`)
+  //registerIPFSProtocol()
+  const latest = await getLatestFromRepo('aragon.aragonpm.eth')
+  mainWindow.loadURL(`http://localhost:8080/ipfs/QmTZKu56dB3DSkS46EUgUn9UaqAdPFmUQF5x6UAaDHW6fX`)
 }
 
 let mainWindow

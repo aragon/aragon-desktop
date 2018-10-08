@@ -3,4 +3,3 @@
 // If index.html was loaded via 'chrome://brave', you can
 // talk to the main browser process using chrome.ipcRenderer
 
-console.log(chrome);
