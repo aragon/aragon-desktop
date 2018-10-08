@@ -2,9 +2,9 @@
   "name": "muon-quick",
   "version": "1.0.0",
   "description": "A minimal Muon application",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "start": "node setup.js"
+    "start": "node setup.js --no-sandbox"
   },
   "repository": "https://github.com/brave/muon-quick",
   "keywords": [
@@ -18,5 +18,14 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron-prebuilt": "brave/electron-prebuilt"
+  },
+  "dependencies": {
+    "@aragon/apm": "^2.0.2",
+    "electron-window-state": "^5.0.1",
+    "execa": "^1.0.0",
+    "go-ipfs-dep": "^0.4.17",
+    "homedir": "^0.6.0",
+    "web3": "^1.0.0-beta.34",
+    "web3-providers-ws": "^1.0.0-beta.34"
   }
 }
