@@ -10,9 +10,8 @@ async function start () {
   if (!running) {
     await startIPFSNode()
   }
-  //registerIPFSProtocol()
   const latest = await getLatestFromRepo('aragon.aragonpm.eth')
-  mainWindow.loadURL(`http://localhost:8080/ipfs/QmTZKu56dB3DSkS46EUgUn9UaqAdPFmUQF5x6UAaDHW6fX`)
+  mainWindow.loadURL(`http://localhost:8080/ipfs/${latest}`)
 }
 
 let mainWindow
