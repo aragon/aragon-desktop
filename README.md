@@ -1,6 +1,16 @@
-# Muon Quick Start
+# Aragon Shell
 
-1. git clone https://github.com/brave/muon-quick.git
-2. cd muon-quick
-3. npm install
-4. npm start
+Something something eggs and shilling
+
+## Running
+
+```sh
+# Clone
+› git clone git@github.com:aragon/aragon-shell
+
+# Download the entirety of the internet
+› npm i
+
+# Run
+› npm start
+```

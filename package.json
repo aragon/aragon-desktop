@@ -1,21 +1,17 @@
 {
-  "name": "muon-quick",
+  "name": "aragon-shell",
   "version": "1.0.0",
-  "description": "A minimal Muon application",
+  "description": "Aragon Desktop",
   "main": "src/main.js",
   "scripts": {
     "start": "node setup.js --no-sandbox"
   },
-  "repository": "https://github.com/brave/muon-quick",
+  "repository": "https://github.com/aragon/aragon-shell",
   "keywords": [
-    "Muon",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "aragon"
   ],
-  "author": "Brave Software",
-  "license": "CC0-1.0",
+  "author": "Aragon Project",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "electron-prebuilt": "brave/electron-prebuilt"
   },
