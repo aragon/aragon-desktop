@@ -1,16 +1,16 @@
 const { app, BrowserWindow } = require('electron')
 const windowStateKeeper = require('electron-window-state')
 
-const { isPortTaken } = require('./lib/util')
-const { startIPFSNode } = require('./lib/ipfs-node')
+const { IpfsConnector } = require('@akashaproject/ipfs-connector')
+const { pinAragonCore } = require('./lib/ipfs-caching')
 const { getLatestFromRepo } = require('./lib/aragon-core')
 
+const instance = IpfsConnector.getInstance()
+
 async function start () {
-  const running = await isPortTaken(5001)
-  if (!running) {
-    await startIPFSNode()
-  }
+  await instance.start()
   const latest = await getLatestFromRepo('aragon.aragonpm.eth')
+  pinAragonCore(latest)
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latest}`)
 }
 
@@ -34,10 +34,6 @@ function createWindow () {
 
   start()
 
-  // alternatively, uncomment the following line to load index.html via
-  // 'chrome://brave' to expose additional APIs such as 'chrome.ipcRenderer'
-  //mainWindow.loadURL('chrome://brave/' + __dirname + '/index.html');
-
   mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', function () {
@@ -49,6 +45,7 @@ app.on('ready', createWindow)
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
+    instance.stop()
     app.quit()
   }
 })

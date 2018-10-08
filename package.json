@@ -16,11 +16,11 @@
     "electron-prebuilt": "brave/electron-prebuilt"
   },
   "dependencies": {
+    "@akashaproject/ipfs-connector": "^1.10.32",
     "@aragon/apm": "^2.0.2",
+    "electron-store": "^2.0.0",
     "electron-window-state": "^5.0.1",
-    "execa": "^1.0.0",
-    "go-ipfs-dep": "^0.4.17",
-    "homedir": "^0.6.0",
+    "eth-provider": "0.0.10",
     "web3": "^1.0.0-beta.34",
     "web3-providers-ws": "^1.0.0-beta.34"
   }
