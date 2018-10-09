@@ -1,11 +1,9 @@
 const url = require('url')
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
 const { session } = require('electron')
-const Store = require('electron-store')
-const store = new Store()
+const storage = require('./storage')
 
-// 7 days is the default expiration time
-// if the pinned hash is not accessed
+// 7 days is the default expiration time if the pinned hash is not accessed
 const IPFS_EXPIRATION = 7
 
 const instance = IpfsConnector.getInstance()
@@ -14,19 +12,32 @@ const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
 }
 
-function pinAragonCore (newHash) {
-  const storedHash = store.get('aragon.aragonpm.eth')
+async function pinAragonCore (newHash) {
+  const storedHash = storage.get('aragon.aragonpm.eth')
   if (storedHash !== newHash) {
     instance.api.apiClient.pin.add(newHash)
     instance.api.apiClient.pin.rm(storedHash)
-    store.set('aragon.aragonpm.eth', newHash)
+    await storage.set('aragon.aragonpm.eth', { hash: newHash })
   }
 }
 
-function updateExpiration (hash) {
+async function updateExpiration (hash) {
   const expirationDate = new Date()
   expirationDate.setDate((expirationDate.getDate() + IPFS_EXPIRATION))
-  store.set(`${hash}-expiration`, expirationDate.getTime())
+  await storage.set(hash, { expiration: expirationDate.getTime() })
+}
+
+async function purgeUnusedIpfsResources () {
+  const keys = await storage.keys()
+  for (const key of keys) {
+    const data = await storage.get(key)
+    if (data.expiration) {
+      if (data.expiration < new Date().getTime()) {
+        instance.api.apiClient.pin.rm(hash)
+        await storage.delete(hash)
+      }
+    }
+  }
 }
 
 function pinIpfsResources () {
@@ -34,23 +45,13 @@ function pinIpfsResources () {
     const path = url.parse(details.url).path
     if (path.startsWith('/ipfs/')) {
       const hash = path.split('/')[2]
-      // If it has already been pinned, check its expiration and act accordingly
-      if (store.has(`${hash}-expiration`)) {
-        const hashExpiration = store.get(`${hash}-expiration`)
-        if (hashExpiration < new Date().getTime()) {
-          instance.api.apiClient.pin.rm(hash)
-          store.delete(`${hash}-expiration`)
-        } else {
-          updateExpiration(hash)
-        }
-      // If not, pin it and set a new expiration
-      } else {
-        updateExpiration(hash)
+      if (!storage.has(hash)) {
         instance.api.apiClient.pin.add(hash)
       }
+      updateExpiration(hash)
     }
     cb({ cancel: false, requestHeaders: details.requestHeaders })
   })
 } 
 
-module.exports = { pinAragonCore, pinIpfsResources }
+module.exports = { pinAragonCore, pinIpfsResources, purgeUnusedIpfsResources }
