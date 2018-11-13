@@ -8,10 +8,11 @@ const { getLatestFromRepo } = require('./lib/aragon-core')
 const instance = IpfsConnector.getInstance()
 
 async function start () {
-  await instance.start()
+  // await instance.start()
   const latest = await getLatestFromRepo('aragon.aragonpm.eth')
   pinAragonCore(latest)
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latest}`)
+  // mainWindow.loadURL(`http://localhost:3000`)
 }
 
 let mainWindow
@@ -28,7 +29,12 @@ function createWindow () {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
+    webPreferences: {
+      nodeIntegration: false
+    }
   })
+
+  mainWindow.setMenu(null)
 
   mainWindowState.manage(mainWindow)
 

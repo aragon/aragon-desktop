@@ -4,7 +4,7 @@ function createWeb3Provider () {
   // Local
   // return new WebSocketProvider('ws://localhost:8545')
   // Rinkeby
-  return new WebSocketProvider('ws://rinkeby.aragon.network:8546')
+  return new WebSocketProvider('wss://rinkeby.eth.aragon.network/ws')
 }
 
 module.exports = { createWeb3Provider }
