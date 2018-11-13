@@ -2,7 +2,7 @@ const { app, BrowserWindow } = require('electron')
 const windowStateKeeper = require('electron-window-state')
 
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
-const { pinAragonCore } = require('./lib/ipfs-caching')
+const { pinAragonCore, pinIpfsResources, purgeUnusedIpfsResources } = require('./lib/ipfs-caching')
 const { getLatestFromRepo } = require('./lib/aragon-core')
 
 const instance = IpfsConnector.getInstance()
@@ -13,6 +13,8 @@ async function start () {
   pinAragonCore(latest)
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latest}`)
   // mainWindow.loadURL(`http://localhost:3000`)
+  pinIpfsResources()
+  purgeUnusedIpfsResources()
 }
 
 let mainWindow
