@@ -4,7 +4,8 @@
   "description": "Aragon Desktop",
   "main": "src/main.js",
   "scripts": {
-    "start": "node setup.js --no-sandbox"
+    "start": "electron . --no-sandbox",
+    "rebuild": "electron-rebuild"
   },
   "repository": "https://github.com/aragon/aragon-shell",
   "keywords": [
@@ -13,7 +14,8 @@
   "author": "Aragon Project",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "electron-prebuilt": "brave/electron-prebuilt"
+    "electron": "^3.0.4",
+    "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
     "@akashaproject/ipfs-connector": "^1.10.32",
