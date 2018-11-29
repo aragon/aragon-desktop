@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const windowStateKeeper = require('electron-window-state')
+const path = require('path')
 
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
 const { pinAragonCore, pinIpfsResources, purgeUnusedIpfsResources } = require('./lib/ipfs-caching')
@@ -26,11 +27,13 @@ function createWindow () {
   })
 
   mainWindow = new BrowserWindow({
-    title: 'Aragon Core',
+    title: 'Aragon',
     x: mainWindowState.x,
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
+    backgroundColor: '#f7fbfd',
+    icon: path.join(__dirname, 'assets/icon.png'),
     webPreferences: {
       nodeIntegration: false
     }
