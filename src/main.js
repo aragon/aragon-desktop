@@ -33,7 +33,7 @@ function createWindow () {
     width: mainWindowState.width,
     height: mainWindowState.height,
     backgroundColor: '#f7fbfd',
-    icon: path.join(__dirname, 'assets/icon.png'),
+    icon: path.join(__dirname, 'app/assets/icon.png'),
     webPreferences: {
       nodeIntegration: false
     }
@@ -43,9 +43,11 @@ function createWindow () {
 
   mainWindowState.manage(mainWindow)
 
+  mainWindow.loadURL(`file://${path.join(__dirname, '../assets/loading.html')}`)
+
   start()
 
-  mainWindow.webContents.openDevTools()
+  setTimeout(() => mainWindow.webContents.openDevTools({mode: 'detach'}), 1000)
 
   mainWindow.on('closed', function () {
     mainWindow = null

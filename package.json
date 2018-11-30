@@ -4,7 +4,7 @@
   "description": "Aragon Desktop",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron . --no-sandbox",
+    "start": "electron .",
     "rebuild": "electron-rebuild"
   },
   "repository": "https://github.com/aragon/aragon-shell",
@@ -15,6 +15,7 @@
   "license": "GPL-3.0-or-later",
   "devDependencies": {
     "electron": "^3.0.4",
+    "electron-packager": "^12.2.0",
     "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
