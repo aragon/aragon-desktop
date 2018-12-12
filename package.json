@@ -11,7 +11,7 @@
   "keywords": [
     "aragon"
   ],
-  "author": "Aragon Project",
+  "author": "Aragon Association <legal@aragon.org>",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
     "electron": "^3.0.4",
