@@ -10,7 +10,7 @@ async function getLatestFromRepo (repo) {
   // Mainnet
   const ensRegistryAddress = '0x314159265dd8dbb310642f98f50c066173c1259b'
   const apm = APM(
-    new Web3(provider(['injected', 'frame'])),
+    new Web3(provider(['direct', 'frame', 'wss://mainnet.eth.aragon.network/ws'])),
     { ensRegistryAddress, ipfs: { host: 'localhost', protocol: 'http', port: 5001 } }
   )
 
