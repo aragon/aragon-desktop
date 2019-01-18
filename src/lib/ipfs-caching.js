@@ -1,4 +1,5 @@
 const url = require('url')
+const { promisify } = require('util')
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
 const { session } = require('electron')
 const storage = require('./storage')
@@ -6,18 +7,37 @@ const storage = require('./storage')
 // 7 days is the default expiration time if the pinned hash is not accessed
 const IPFS_EXPIRATION = 7
 
-const instance = IpfsConnector.getInstance()
+const ipfsInstance = IpfsConnector.getInstance()
+
+// Simple promisified cache for pinning operations
+let promisifiedIpfsPinAdd
+let promisifiedIpfsPinRm
+const ipfsPinAdd = (...args) => {
+  if (!promisifiedIpfsPinAdd) {
+    promisifiedIpfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
+  }
+  promisifiedIpfsPinAdd(...args)
+}
+const ipfsPinRm = (...args) => {
+  if (!promisifiedIpfsPinRm) {
+    promisifiedIpfsPinRm = promisify(ipfsInstance.api.ipfsApi.pin.add)
+  }
+  promisifiedIpfsPinRm(...args)
+}
 
 const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
 }
 
-async function pinAragonCore (newHash) {
+async function pinAragonClient (newHash) {
   const storedHash = storage.get('aragon.aragonpm.eth')
   if (storedHash !== newHash) {
-    instance.api.apiClient.pin.add(newHash)
-    instance.api.apiClient.pin.rm(storedHash)
+    await ipfsPinAdd(newHash)
+    if (storedHash) {
+      await ipfsPinRm(storedHash)
+    }
     await storage.set('aragon.aragonpm.eth', { hash: newHash })
+    console.log('Pinned new client hash:', newHash)
   }
 }
 
@@ -33,11 +53,12 @@ async function purgeUnusedIpfsResources () {
     const data = await storage.get(key)
     if (data.expiration) {
       if (data.expiration < new Date().getTime()) {
-        instance.api.apiClient.pin.rm(hash)
+        await ipfsPinRm(hash)
         await storage.delete(hash)
       }
     }
   }
+  console.log('Purged old IPFS resources')
 }
 
 function pinIpfsResources () {
@@ -46,12 +67,13 @@ function pinIpfsResources () {
     if (path.startsWith('/ipfs/')) {
       const hash = path.split('/')[2]
       if (!storage.has(hash)) {
-        instance.api.apiClient.pin.add(hash)
+        ipfsPinAdd(hash)
       }
       updateExpiration(hash)
+      console.log('Pinned new IPFS resource:', hash)
     }
     cb({ cancel: false, requestHeaders: details.requestHeaders })
   })
-} 
+}
 
-module.exports = { pinAragonCore, pinIpfsResources, purgeUnusedIpfsResources }
+module.exports = { pinAragonClient, pinIpfsResources, purgeUnusedIpfsResources }

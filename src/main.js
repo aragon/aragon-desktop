@@ -3,17 +3,21 @@ const windowStateKeeper = require('electron-window-state')
 const path = require('path')
 
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
-const { pinAragonCore, pinIpfsResources, purgeUnusedIpfsResources } = require('./lib/ipfs-caching')
+const { pinAragonClient, pinIpfsResources, purgeUnusedIpfsResources } = require('./lib/ipfs-caching')
 const { getLatestFromRepo } = require('./lib/aragon-core')
 
-const instance = IpfsConnector.getInstance()
+const ipfsInstance = IpfsConnector.getInstance()
 
 async function start () {
-  // await instance.start()
+  // Start IPFS first so we can pin it afterwards
+  await ipfsInstance.start()
+
   const latest = await getLatestFromRepo('aragon.aragonpm.eth')
-  pinAragonCore(latest)
+  pinAragonClient(latest)
+
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latest}`)
   // mainWindow.loadURL(`http://localhost:3000`)
+
   pinIpfsResources()
   purgeUnusedIpfsResources()
 }
@@ -21,7 +25,7 @@ async function start () {
 let mainWindow
 
 function createWindow () {
-  let mainWindowState = windowStateKeeper({
+  const mainWindowState = windowStateKeeper({
     defaultWidth: 1000,
     defaultHeight: 800
   })
@@ -58,7 +62,7 @@ app.on('ready', createWindow)
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
-    instance.stop()
+    ipfsInstance.stop()
     app.quit()
   }
 })

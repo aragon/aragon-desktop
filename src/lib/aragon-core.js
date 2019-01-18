@@ -14,8 +14,9 @@ async function getLatestFromRepo (repo) {
     { ensRegistryAddress, ipfs: { host: 'localhost', protocol: 'http', port: 5001 } }
   )
 
-  const { content } = await apm.getLatestVersion(repo)
-  return content.location
+  const repoDetails = await apm.getLatestVersion(repo)
+  console.log(`aragomPM latest content for ${repo}:`, repoDetails)
+  return repoDetails.content.location
 }
 
 module.exports = { getLatestFromRepo }
