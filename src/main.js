@@ -2,6 +2,7 @@ const { app, BrowserWindow, shell } = require('electron')
 const windowStateKeeper = require('electron-window-state')
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
 const path = require('path')
+const hookTouchBar = require('./touchbar')
 
 const { getLatestFromRepo } = require('./lib/aragon-core')
 const {
@@ -45,8 +46,9 @@ function createWindow () {
     backgroundColor: '#f7fbfd',
     icon: path.join(__dirname, 'app/assets/icon.png'),
     webPreferences: {
-      nodeIntegration: false
-    }
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'injections', 'hook.js')
+    },
   })
 
   mainWindow.setMenu(null)
@@ -56,15 +58,16 @@ function createWindow () {
   mainWindow.loadURL(`file://${path.join(__dirname, '../assets/loading.html')}`)
 
   start(mainWindow)
+  hookTouchBar(mainWindow)
 
   setTimeout(() => mainWindow.webContents.openDevTools({mode: 'detach'}), 1000)
 
   // Sniff new windows from anchors and open in external browsers instead
-  mainWindow.webContents.on('new-window', function(event, url){
-    event.preventDefault();
+  mainWindow.webContents.on('new-window', function(event, url) {
+    event.preventDefault()
     console.log(`Opening ${url} in an external browser`)
     shell.openExternal(url)
-  });
+  })
 
   // Sniff navigation requests
   const navigationRegex = /https?:\/\/(rinkeby|mainnet).aragon.org\/?/
