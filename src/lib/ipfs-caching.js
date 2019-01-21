@@ -29,15 +29,16 @@ const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
 }
 
-async function pinAragonClient (newHash) {
-  const storedHash = storage.get('aragon.aragonpm.eth')
+async function pinAragonClientForNetwork (newHash, network) {
+  const storageKey = `${network}:aragon.aragonpm.eth`
+  const storedHash = storage.get(storageKey)
   if (storedHash !== newHash) {
     await ipfsPinAdd(newHash)
     if (storedHash) {
       await ipfsPinRm(storedHash)
     }
-    await storage.set('aragon.aragonpm.eth', { hash: newHash })
-    console.log('Pinned new client hash:', newHash)
+    await storage.set(storageKey, { hash: newHash })
+    console.log(`Pinned new client hash for ${network}:`, newHash)
   }
 }
 
@@ -76,4 +77,4 @@ function pinIpfsResources () {
   })
 }
 
-module.exports = { pinAragonClient, pinIpfsResources, purgeUnusedIpfsResources }
+module.exports = { pinAragonClientForNetwork, pinIpfsResources, purgeUnusedIpfsResources }
