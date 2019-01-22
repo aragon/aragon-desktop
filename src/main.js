@@ -57,7 +57,9 @@ function createWindow () {
 
   start(mainWindow)
 
-  setTimeout(() => mainWindow.webContents.openDevTools({mode: 'detach'}), 1000)
+  if (process.env.NODE_ENV === 'development') {
+    setTimeout(() => mainWindow.webContents.openDevTools({mode: 'detach'}), 1000)
+  }
 
   // Sniff new windows from anchors and open in external browsers instead
   mainWindow.webContents.on('new-window', function(event, url){
