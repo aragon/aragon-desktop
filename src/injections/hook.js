@@ -7,17 +7,13 @@ ipcRenderer.on('navigate-to-app', (_, app) => {
   window.location.href = `http://localhost:8080/ipfs/${clientHash}/#/${dao}/${app}`
 })
 
-function hook () {
-  // Find React root
-  const root = document.getElementById('root')
-  const el = root.children[0]
+function findReactProps (el) {
   const internalInstanceKey = Object.keys(el).find(
     (key) => el.hasOwnProperty(key) && key.startsWith('__reactInternalInstance$')
   )
   
-  if (!internalInstanceKey) {
-    // Root not found
-  }
+  // Element is not a React component
+  if (!internalInstanceKey) return {}
   
   const fiberNode = el[internalInstanceKey]
   
@@ -25,22 +21,33 @@ function hook () {
     && fiberNode.return
     && fiberNode.return.stateNode
     && fiberNode.return.stateNode._reactInternalFiber.return)) {
-    // Root not found
+    // No state for component
+    return {}
   }
   
-  // Try to determine props
+  // Reach for props
   const component = fiberNode.return.stateNode._reactInternalFiber.return
-  const props = component.memoizedProps
+  
+  return component.memoizedProps
+}
+
+function hook () {
+  // Find React props for root component
+  const props = findReactProps(
+    document.getElementById('root').children[0]
+  )
   
   // The wrapper is not available yet, so let's try again later
   if (!props.wrapper) {
     console.debug('Wrapper not available, waiting...')
     setTimeout(hook, 500)
-  } else {
-    props.wrapper.apps.subscribe((apps) => {
-      ipcRenderer.send('apps', apps)
-    })
+    return
   }
+
+  // Send apps to main process over IPC
+  props.wrapper.apps.subscribe((apps) => {
+    ipcRenderer.send('apps', apps)
+  })
 }
 
 window.onload = hook
