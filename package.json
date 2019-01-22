@@ -6,7 +6,9 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "rebuild": "electron-rebuild"
+    "rebuild": "electron-rebuild",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": "https://github.com/aragon/aragon-desktop",
   "keywords": [
@@ -16,7 +18,7 @@
   "license": "GPL-3.0-or-later",
   "devDependencies": {
     "electron": "^4.0.1",
-    "electron-packager": "^13.0.1",
+    "electron-builder": "^20.38.5",
     "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
@@ -27,5 +29,14 @@
     "eth-provider": "^0.1.4",
     "web3": "^1.0.0-beta.34",
     "web3-providers-ws": "^1.0.0-beta.34"
+  },
+  "build": {
+    "appId": "org.aragon.desktop",
+    "productName": "Aragon Desktop",
+    "artifactName": "${name}.${ext}",
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.business"
+    }
   }
 }
