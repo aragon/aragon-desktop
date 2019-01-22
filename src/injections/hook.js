@@ -32,6 +32,14 @@ function findReactProps (el) {
 }
 
 function hook () {
+  // We're probably still on the loading screen
+  const dao = location.href.split('/')[6]
+  if (!dao) {
+    console.debug('No DAO open...')
+    setTimeout(hook, 500)
+    return
+  }
+
   // Find React props for root component
   const props = findReactProps(
     document.getElementById('root').children[0]
