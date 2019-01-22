@@ -6,8 +6,10 @@ It queries the Ethereum blockchain for the latest version of the app, and then s
 
 ## Running locally
 
+Requires Node v10.x.
+
 ```sh
-› git clone git@github.com:aragon/aragon-desktop
-› npm i
-› npm start
+git clone git@github.com:aragon/aragon-desktop
+npm i
+npm start
 ```
