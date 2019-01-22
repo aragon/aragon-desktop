@@ -33,7 +33,7 @@
   "build": {
     "appId": "org.aragon.desktop",
     "productName": "Aragon Desktop",
-    "artifactName": "${name}.${ext}",
+    "artifactName": "${productName}.${ext}",
     "mac": {
       "target": "dmg",
       "category": "public.app-category.business"

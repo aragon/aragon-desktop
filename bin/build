@@ -10,10 +10,10 @@ transfer() {
 }
 
 echo "Uploading Mac artifact..."
-transfer ./dist/aragon-desktop.dmg
+transfer "./dist/Aragon Desktop.dmg"
 
 echo "Uploading Linux (snap) artifact..."
-transfer ./dist/aragon-desktop.snap
+transfer "./dist/Aragon Desktop.snap"
 
 echo "Uploading Linux (AppImage) artifact..."
-transfer ./dist/aragon-desktop.AppImage
+transfer "./dist/Aragon Desktop.AppImage"
