@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+# Build for Mac & Linux
+npm run dist -- -ml
+
+# Upload artifacts
+transfer() {
+    curl --progress-bar --upload-file "$1" https://transfer.sh/$(basename $1) | tee /dev/null;
+}
+
+echo "Uploading Mac artifact..."
+transfer "./dist/Aragon Desktop.dmg"
+
+echo "Uploading Linux (snap) artifact..."
+transfer "./dist/Aragon Desktop.snap"
+
+echo "Uploading Linux (AppImage) artifact..."
+transfer "./dist/Aragon Desktop.AppImage"
