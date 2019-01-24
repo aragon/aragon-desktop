@@ -4,6 +4,8 @@ Aragon Desktop is an Electron app that runs the Aragon client in a fully decentr
 
 It queries the Ethereum blockchain for the latest version of the app, and then serves it over a local IPFS node.
 
+![Screenshot](.github/screenshot.png)
+
 ## Running locally
 
 Requires Node v10.x.
