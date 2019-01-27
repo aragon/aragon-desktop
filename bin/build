@@ -4,16 +4,36 @@ set -e
 # Build for Mac & Linux
 npm run dist -- -ml
 
-# Upload artifacts
+# Helpers
 transfer() {
-    curl --progress-bar --upload-file "$1" https://transfer.sh/$(basename $1) | tee /dev/null;
+    curl --progress-bar --upload-file "$1" "https://transfer.sh/$(basename $1)" | tee /dev/null;
 }
 
+function status() {
+	platform=$1
+	artifact_url=$2
+	endpoint=https://api.github.com/repos/aragon/aragon-desktop/statuses/$TRAVIS_COMMIT
+
+	echo "{
+		\"state\": \"success\",
+		\"target_url\": \"$artifact_url\",
+		\"description\": \"Build artifact ($platform)\",
+		\"context\": \"build-artifact/$platform\"
+	}" | curl --data @- \
+		-H "Content-Type: application/json" \
+		-H "authToken: $GH_TOKEN" \
+		$endpoint
+}
+
+# Upload artifacts
 echo "Uploading Mac artifact..."
-transfer "./dist/Aragon Desktop.dmg"
+artifact=$(transfer "./dist/Aragon Desktop.dmg")
+status macos $artifact
 
 echo "Uploading Linux (snap) artifact..."
-transfer "./dist/Aragon Desktop.snap"
+artifact=$(transfer "./dist/Aragon Desktop.snap")
+status snap $artifact
 
 echo "Uploading Linux (AppImage) artifact..."
-transfer "./dist/Aragon Desktop.AppImage"
+artifact=$(transfer "./dist/Aragon Desktop.AppImage")
+status appimage $artifact
