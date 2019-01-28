@@ -23,7 +23,7 @@ async function loadAragonClient (network = 'main') {
 async function start (mainWindow) {
   try {
     const version = await ipfsInstance.api.ipfsApi.version()
-    console.log('Detected running instance of IPFS, no need to start our own')
+    console.log(`Detected running instance of IPFS ${version ? `(version: ${version.version})` : ''}, no need to start our own`)
   } catch (e) {
     console.log('Could not detect running instance of IPFS, starting it ourselves...')
     await ipfsInstance.start()
