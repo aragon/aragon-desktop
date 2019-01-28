@@ -11,6 +11,7 @@ const {
 } = require('./lib/ipfs-caching')
 
 const ipfsInstance = IpfsConnector.getInstance()
+let startedIpfs = false
 
 async function loadAragonClient (network = 'main') {
   const latestHashForNetwork = await getLatestFromRepo('aragon.aragonpm.eth', network)
@@ -20,8 +21,14 @@ async function loadAragonClient (network = 'main') {
 }
 
 async function start (mainWindow) {
-  // Start IPFS first so we can pin it afterwards
-  await ipfsInstance.start()
+  try {
+    const version = await ipfsInstance.api.ipfsApi.version()
+    console.log('Detected running instance of IPFS, no need to start our own')
+  } catch (e) {
+    console.log('Could not detect running instance of IPFS, starting it ourselves...')
+    await ipfsInstance.start()
+    startedIpfs = true
+  }
 
   const latestClientHash = await loadAragonClient()
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
@@ -97,7 +104,9 @@ app.on('ready', createWindow)
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
-    ipfsInstance.stop()
+    if (startedIpfs) {
+      ipfsInstance.stop()
+    }
     app.quit()
   }
 })
