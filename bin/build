@@ -1,28 +1,33 @@
 #!/bin/bash
 set -e
 
+if [ -z "$TRAVIS_PULL_REQUEST_SHA"]; then
+  echo "Skipping build on non-PR push"
+  exit 0
+fi
+
 # Build for Mac & Linux
 npm run dist -- -ml
 
 # Helpers
 transfer() {
-    curl --progress-bar --upload-file "$1" "https://transfer.sh/$(basename $1)" | tee /dev/null;
+  curl --progress-bar --upload-file "$1" "https://transfer.sh/$(basename $1)" | tee /dev/null;
 }
 
 function status() {
-	platform=$1
-	artifact_url=$2
-	endpoint=https://api.github.com/repos/aragon/aragon-desktop/statuses/$TRAVIS_COMMIT
+  platform=$1
+  artifact_url=$2
+  endpoint=https://api.github.com/repos/aragon/aragon-desktop/statuses/$TRAVIS_PULL_REQUEST_SHA
 
-	echo "{
-		\"state\": \"success\",
-		\"target_url\": \"$artifact_url\",
-		\"description\": \"Build artifact ($platform)\",
-		\"context\": \"build-artifact/$platform\"
-	}" | curl --data @- \
-		-H "Content-Type: application/json" \
-		-H "Authorization: token $GH_TOKEN" \
-		$endpoint
+  echo "{
+    \"state\": \"success\",
+    \"target_url\": \"$artifact_url\",
+    \"description\": \"Build artifact ($platform)\",
+    \"context\": \"build-artifact/$platform\"
+  }" | curl --data @- \
+    -H "Content-Type: application/json" \
+    -H "Authorization: token $GH_TOKEN" \
+    $endpoint
 }
 
 # Upload artifacts

@@ -13,7 +13,7 @@ cache:
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
 
-script:
+after_success:
   - ./bin/build
 
 branches:
