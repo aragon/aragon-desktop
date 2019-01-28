@@ -35,6 +35,25 @@
     "productName": "Aragon Desktop",
     "artifactName": "${productName}.${ext}",
     "copyright": "Copyright © 2019 Aragon Association",
+    "dmg": {
+      "contents": [
+        {
+          "type": "link",
+          "path": "/Applications",
+          "x": 375,
+          "y": 225
+        },
+        {
+          "type": "file",
+          "x": 130,
+          "y": 225
+        }
+      ],
+      "window": {
+        "width": 700,
+        "height": 400
+      }
+    },
     "mac": {
       "target": "dmg",
       "category": "public.app-category.business"
