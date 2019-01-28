@@ -34,6 +34,7 @@
     "appId": "org.aragon.desktop",
     "productName": "Aragon Desktop",
     "artifactName": "${productName}.${ext}",
+    "copyright": "Copyright © 2019 Aragon Association",
     "mac": {
       "target": "dmg",
       "category": "public.app-category.business"
