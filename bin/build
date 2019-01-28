@@ -11,7 +11,8 @@ npm run dist -- -ml
 
 # Helpers
 transfer() {
-  curl --progress-bar --upload-file "$1" "https://transfer.sh/$(basename $1)" | tee /dev/null;
+  package=$(echo $(basename $1) | sed "s/ /%20/g") # Poor man's url-encode
+  curl --progress-bar --upload-file "$1" "https://transfer.sh/$package" | tee /dev/null;
 }
 
 function status() {
