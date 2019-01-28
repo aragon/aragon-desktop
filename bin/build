@@ -14,6 +14,9 @@ function status() {
 	artifact_url=$2
 	endpoint=https://api.github.com/repos/aragon/aragon-desktop/statuses/$TRAVIS_COMMIT
 
+  echo "test var: "
+  echo $TEST
+
 	echo "{
 		\"state\": \"success\",
 		\"target_url\": \"$artifact_url\",
