@@ -21,7 +21,7 @@ function status() {
 		\"context\": \"build-artifact/$platform\"
 	}" | curl --data @- \
 		-H "Content-Type: application/json" \
-		-H "authToken: $GH_TOKEN" \
+		-H "Authorization: token $GH_TOKEN" \
 		$endpoint
 }
 
