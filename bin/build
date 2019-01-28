@@ -34,12 +34,15 @@ function status() {
 # Upload artifacts
 echo "Uploading Mac artifact..."
 artifact=$(transfer "./dist/Aragon Desktop.dmg")
+echo "Uploaded to $artifact"
 status macos "$artifact"
 
 echo "Uploading Linux (snap) artifact..."
 artifact=$(transfer "./dist/Aragon Desktop.snap")
+echo "Uploaded to $artifact"
 status snap "$artifact"
 
 echo "Uploading Linux (AppImage) artifact..."
 artifact=$(transfer "./dist/Aragon Desktop.AppImage")
+echo "Uploaded to $artifact"
 status appimage "$artifact"
