@@ -14,6 +14,15 @@ const {
 const ipfsInstance = IpfsConnector.getInstance()
 let startedIpfs = false
 
+// Put the IPFS binary into the userData
+// This avoids collisions if a user already has an IPFS binary installed
+const ipfsPath = path.join(app.getPath('userData'), 'go-ipfs')
+ipfsInstance.setBinPath(ipfsPath)
+
+// Init IPFS in the userData as well
+const ipfsInitPath = path.join(app.getPath('userData'), 'ipfs-init')
+ipfsInstance.setIpfsFolder(ipfsInitPath)
+
 async function loadAragonClient (network = 'main') {
   const latestHashForNetwork = await getLatestFromRepo('aragon.aragonpm.eth', network)
   await pinAragonClientForNetwork(latestHashForNetwork, network)
