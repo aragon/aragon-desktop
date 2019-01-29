@@ -1,4 +1,5 @@
 const { app, BrowserWindow, shell } = require('electron')
+const log = require('electron-log')
 const windowStateKeeper = require('electron-window-state')
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
 const path = require('path')
@@ -23,13 +24,14 @@ async function loadAragonClient (network = 'main') {
 async function start (mainWindow) {
   try {
     const version = await ipfsInstance.api.apiClient.version()
-    console.log(`Detected running instance of IPFS ${version ? `(version: ${version.version})` : ''}, no need to start our own`)
+    log.info(`Detected running instance of IPFS ${version ? `(version: ${version.version})` : ''}, no need to start our own`)
   } catch (e) {
-    console.log('Could not detect running instance of IPFS, starting it ourselves...')
+    log.info('Could not detect running instance of IPFS, starting it ourselves...')
     await ipfsInstance.start()
     startedIpfs = true
   }
 
+  log.info('Loading Aragon client...')
   const latestClientHash = await loadAragonClient()
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
 
@@ -71,7 +73,7 @@ function createWindow () {
   // Sniff new windows from anchors and open in external browsers instead
   mainWindow.webContents.on('new-window', function(event, url){
     event.preventDefault();
-    console.log(`Opening ${url} in an external browser`)
+    log.info(`Opening ${url} in an external browser`)
     shell.openExternal(url)
   });
 
@@ -85,7 +87,7 @@ function createWindow () {
     if (Array.isArray(matchesAragonApp)) {
       // If we're going to a different network for the client, load it from IPFS instead
       const network = matchesAragonApp[1] // Network is the first capture group
-      console.log(`Navigating app to ${network} via IPFS instead`)
+      log.info(`Navigating app to ${network} via IPFS instead`)
 
       // In case it takes a while to pin and load, reset to the loading screen
       mainWindow.loadURL(`file://${path.join(__dirname, '../assets/loading.html')}`)
@@ -94,7 +96,7 @@ function createWindow () {
       mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
     } else {
       // Otherwise, open it in the OS' default browser
-      console.log(`Opening ${url} in an external browser`)
+      log.info(`Opening ${url} in an external browser`)
       shell.openExternal(url)
     }
   })

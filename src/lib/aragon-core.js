@@ -1,3 +1,4 @@
+const log= require('electron-log')
 const Web3 = require('web3')
 const APM = require('@aragon/apm')
 const provider = require('eth-provider')
@@ -20,7 +21,7 @@ async function getLatestFromRepo (repo, network) {
   )
 
   const repoDetails = await apm.getLatestVersion(repo)
-  console.log(`aragomPM latest content for ${repo}:`, repoDetails)
+  log.info(`Obtained aragomPM latest content for ${repo}:`, repoDetails)
   return repoDetails.content.location
 }
 
