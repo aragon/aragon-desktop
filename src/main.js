@@ -5,8 +5,8 @@ const path = require('path')
 
 const { getLatestFromRepo } = require('./lib/aragon-core')
 const {
+  listenAndPinResources,
   pinAragonClientForNetwork,
-  pinIpfsResources,
   purgeUnusedIpfsResources
 } = require('./lib/ipfs-caching')
 
@@ -33,8 +33,8 @@ async function start (mainWindow) {
   const latestClientHash = await loadAragonClient()
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
 
-  pinIpfsResources()
-  purgeUnusedIpfsResources()
+  listenAndPinResources()
+  await purgeUnusedIpfsResources()
 }
 
 function createWindow () {

@@ -10,20 +10,8 @@ const IPFS_EXPIRATION = 7
 const ipfsInstance = IpfsConnector.getInstance()
 
 // Simple promisified cache for pinning operations
-let promisifiedIpfsPinAdd
-let promisifiedIpfsPinRm
-const ipfsPinAdd = (...args) => {
-  if (!promisifiedIpfsPinAdd) {
-    promisifiedIpfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
-  }
-  promisifiedIpfsPinAdd(...args)
-}
-const ipfsPinRm = (...args) => {
-  if (!promisifiedIpfsPinRm) {
-    promisifiedIpfsPinRm = promisify(ipfsInstance.api.ipfsApi.pin.add)
-  }
-  promisifiedIpfsPinRm(...args)
-}
+const ipfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
+const ipfsPinRm = promisify(ipfsInstance.api.ipfsApi.pin.rm)
 
 const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
@@ -31,7 +19,7 @@ const ipfsFilter = {
 
 async function pinAragonClientForNetwork (newHash, network) {
   const storageKey = `${network}:aragon.aragonpm.eth`
-  const storedHash = storage.get(storageKey)
+  const storedHash = await storage.get(storageKey)
   if (storedHash !== newHash) {
     await ipfsPinAdd(newHash)
     if (storedHash) {
@@ -62,13 +50,13 @@ async function purgeUnusedIpfsResources () {
   console.log('Purged old IPFS resources')
 }
 
-function pinIpfsResources () {
-  session.defaultSession.webRequest.onBeforeSendHeaders(ipfsFilter, (details, cb) => {
+function listenAndPinResources () {
+  session.defaultSession.webRequest.onBeforeSendHeaders(ipfsFilter, async (details, cb) => {
     const path = url.parse(details.url).path
     if (path.startsWith('/ipfs/')) {
       const hash = path.split('/')[2]
-      if (!storage.has(hash)) {
-        ipfsPinAdd(hash)
+      if (!(await storage.has(hash))) {
+        await ipfsPinAdd(hash)
       }
       updateExpiration(hash)
       console.log('Pinned new IPFS resource:', hash)
@@ -77,4 +65,4 @@ function pinIpfsResources () {
   })
 }
 
-module.exports = { pinAragonClientForNetwork, pinIpfsResources, purgeUnusedIpfsResources }
+module.exports = { listenAndPinResources, pinAragonClientForNetwork, purgeUnusedIpfsResources }
