@@ -39,7 +39,7 @@ async function start (mainWindow) {
 
 function createWindow () {
   const mainWindowState = windowStateKeeper({
-    defaultWidth: 1000,
+    defaultWidth: 1200,
     defaultHeight: 800
   })
 
