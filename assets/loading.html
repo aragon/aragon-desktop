@@ -8,21 +8,34 @@
 </head>
 <body>
     <style>
+        @font-face {
+          font-family: "overpass";
+          src: url("overpass-regular.woff2"), format("woff2");
+          font-weight: 400;
+          font-style: normal;
+        }
         html, body {
-            height: 100%;
-            overflow: hidden;
+          height: 100%;
+          overflow: hidden;
         }
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
         }
         img {
-            align-self: center;
-            margin: auto;
+          align-self: center;
+        }
+        p {
+          font-family: overpass, sans-serif;
+          font-weight: 400;
+          margin-top: 30px;
+          color: #707070;
         }
     </style>
     <img src="ethereum-loading.svg" />
+    <p>Please wait, this may take a few moments…
 </body>
 </html>
