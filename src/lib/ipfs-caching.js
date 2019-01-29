@@ -16,13 +16,13 @@ const ipfsPinAdd = (...args) => {
   if (!promisifiedIpfsPinAdd) {
     promisifiedIpfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
   }
-  promisifiedIpfsPinAdd(...args)
+  return promisifiedIpfsPinAdd(...args)
 }
 const ipfsPinRm = (...args) => {
   if (!promisifiedIpfsPinRm) {
     promisifiedIpfsPinRm = promisify(ipfsInstance.api.ipfsApi.pin.add)
   }
-  promisifiedIpfsPinRm(...args)
+  return promisifiedIpfsPinRm(...args)
 }
 
 const ipfsFilter = {
