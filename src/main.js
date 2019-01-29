@@ -2,7 +2,9 @@ const { app, BrowserWindow, shell } = require('electron')
 const log = require('electron-log')
 const windowStateKeeper = require('electron-window-state')
 const { IpfsConnector } = require('@akashaproject/ipfs-connector')
+const fs = require('fs')
 const path = require('path')
+const { promisify } = require('util')
 
 const { getLatestFromRepo } = require('./lib/aragon-core')
 const {
@@ -10,6 +12,9 @@ const {
   pinAragonClientForNetwork,
   purgeUnusedIpfsResources
 } = require('./lib/ipfs-caching')
+const storage = require('./lib/storage')
+
+const PINNED_INITIAL_CLIENT_KEY = 'main:initialClient'
 
 const ipfsInstance = IpfsConnector.getInstance()
 let startedIpfs = false
@@ -38,6 +43,26 @@ async function start (mainWindow) {
     log.info('Could not detect running instance of IPFS, starting it ourselves...')
     await ipfsInstance.start()
     startedIpfs = true
+  }
+
+  const pinnedInitial = await storage.get(PINNED_INITIAL_CLIENT_KEY)
+  if (!pinnedInitial || !pinnedInitial.isPinned) {
+    // Initial run; pin the bundled Aragon client to the bundled IPFS node
+    const bundledClientPath = './assets/aragon-client/main'
+    const bundledClientHashes = await promisify(fs.readdir)(bundledClientPath)
+
+    if (bundledClientHashes.length > 1) {
+      log.warn('App has bundled more than one Aragon client!')
+    }
+
+    log.info(`Pinning bundled Aragon client (${bundledClientHashes[0]})`)
+
+    await promisify(ipfsInstance.api.apiClient.util.addFromFs)(
+      path.join(bundledClientPath, bundledClientHashes[0]),
+      { recursive: true }
+    )
+    await pinAragonClientForNetwork(bundledClientHashes[0], 'main')
+    await storage.set(PINNED_INITIAL_CLIENT_KEY, { isPinned: true })
   }
 
   log.info('Loading Aragon client...')
