@@ -14,6 +14,8 @@ const {
 } = require('./lib/ipfs-caching')
 const storage = require('./lib/storage')
 
+log.transports.file.level = 'info'
+
 const PINNED_INITIAL_CLIENT_KEY = 'main:initialClient'
 
 const ipfsInstance = IpfsConnector.getInstance()
@@ -48,15 +50,14 @@ async function start (mainWindow) {
   const pinnedInitial = await storage.get(PINNED_INITIAL_CLIENT_KEY)
   if (!pinnedInitial || !pinnedInitial.isPinned) {
     // Initial run; pin the bundled Aragon client to the bundled IPFS node
-    const bundledClientPath = './assets/aragon-client/main'
+    const bundledClientPath = path.join(__dirname, '../assets/aragon-client/main')
     const bundledClientHashes = await promisify(fs.readdir)(bundledClientPath)
 
     if (bundledClientHashes.length > 1) {
       log.warn('App has bundled more than one Aragon client!')
     }
 
-    log.info(`Pinning bundled Aragon client (${bundledClientHashes[0]})`)
-
+    log.info(`Adding bundled Aragon client (${bundledClientHashes[0]}) to IPFS`)
     await promisify(ipfsInstance.api.apiClient.util.addFromFs)(
       path.join(bundledClientPath, bundledClientHashes[0]),
       { recursive: true }
@@ -86,7 +87,6 @@ function createWindow () {
     width: mainWindowState.width,
     height: mainWindowState.height,
     backgroundColor: '#f7fbfd',
-    icon: path.join(__dirname, 'app/assets/icon.png'),
     webPreferences: {
       nodeIntegration: false
     }

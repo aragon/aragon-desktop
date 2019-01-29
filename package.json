@@ -36,6 +36,7 @@
     "productName": "Aragon Desktop",
     "artifactName": "${productName}.${ext}",
     "copyright": "Copyright © 2019 Aragon Association",
+    "asar": false,
     "dmg": {
       "contents": [
         {
