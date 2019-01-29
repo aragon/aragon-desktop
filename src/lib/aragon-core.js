@@ -4,6 +4,8 @@ const APM = require('@aragon/apm')
 const provider = require('eth-provider')
 const networks = require('./networks')
 
+IPFS_TIMEOUT = 600000 // 10min
+
 async function getLatestFromRepo (repo, network) {
   const networkConfig = networks[network]
   if (!networkConfig) {
@@ -20,7 +22,7 @@ async function getLatestFromRepo (repo, network) {
     }
   )
 
-  const repoDetails = await apm.getLatestVersion(repo)
+  const repoDetails = await apm.getLatestVersion(repo, IPFS_TIMEOUT)
   log.info(`Obtained aragomPM latest content for ${repo}:`, repoDetails)
   return repoDetails.content.location
 }
