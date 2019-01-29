@@ -16,9 +16,14 @@ const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
 }
 
+// Note the storage layout for our IPFS cache:
+//   - mainnet:aragon.aragonpm.eth -> { hash }
+//   - rinkeby:aragon.aragonpm.eth -> { hash }
+//   - <hash> -> { hash, expiration }
+
 async function pinAragonClientForNetwork (newHash, network) {
   const storageKey = `${network}:aragon.aragonpm.eth`
-  const storedHash = await storage.get(storageKey)
+  const { hash: storedHash } = await storage.get(storageKey)
   if (storedHash !== newHash) {
     log.debug(`Pinning new client hash for ${network}: ${newHash}`)
     await ipfsPinAdd(newHash)
@@ -35,17 +40,17 @@ async function updateExpiration (hash) {
   const expirationDate = new Date()
   expirationDate.setDate((expirationDate.getDate() + IPFS_EXPIRATION))
   log.debug(`Updating expiration date for ${hash}: ${expirationDate}`)
-  await storage.set(hash, { expiration: expirationDate.getTime() })
+  await storage.set(hash, { hash, expiration: expirationDate.getTime() })
 }
 
 async function purgeUnusedIpfsResources () {
   const keys = await storage.keys()
   for (const key of keys) {
     const data = await storage.get(key)
-    if (data.expiration && data.expiration < new Date().getTime()) {
-      log.debug(`Purging unused IPFS resource: ${hash}`)
-      await ipfsPinRm(hash)
-      await storage.delete(hash)
+    if (data.hash && data.expiration && data.expiration < new Date().getTime()) {
+      log.debug(`Purging unused IPFS resource: ${data.hash}`)
+      await ipfsPinRm(data.hash)
+      await storage.delete(key)
     }
   }
   log.info('Purged old IPFS resources')
