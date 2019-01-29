@@ -14,6 +14,15 @@ const {
 const ipfsInstance = IpfsConnector.getInstance()
 let startedIpfs = false
 
+// Put the IPFS binary into the userData
+// This avoids collisions if a user already has an IPFS binary installed
+const ipfsPath = path.join(app.getPath('userData'), 'go-ipfs')
+ipfsInstance.setBinPath(ipfsPath)
+
+// Init IPFS in the userData as well
+const ipfsInitPath = path.join(app.getPath('userData'), 'ipfs-init')
+ipfsInstance.setIpfsFolder(ipfsInitPath)
+
 async function loadAragonClient (network = 'main') {
   const latestHashForNetwork = await getLatestFromRepo('aragon.aragonpm.eth', network)
   await pinAragonClientForNetwork(latestHashForNetwork, network)
@@ -102,13 +111,19 @@ function createWindow () {
   })
 }
 
+async function shutdown() {
+  if (startedIpfs) {
+    log.info(`Quitting IPFS...`)
+    await ipfsInstance.stop()
+  }
+  log.info(`Quitting...`)
+  app.quit()
+}
+
 app.on('ready', createWindow)
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    if (startedIpfs) {
-      ipfsInstance.stop()
-    }
-    app.quit()
-  }
-})
+if (process.platform === 'darwin') {
+  app.on('will-quit', shutdown)
+} else {
+  app.on('window-all-closed', shutdown)
+}
