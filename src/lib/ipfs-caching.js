@@ -8,10 +8,8 @@ const storage = require('./storage')
 const IPFS_EXPIRATION = 7
 
 const ipfsInstance = IpfsConnector.getInstance()
-
-// Simple promisified cache for pinning operations
-const ipfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
-const ipfsPinRm = promisify(ipfsInstance.api.ipfsApi.pin.rm)
+const ipfsPinAdd = promisify(ipfsInstance.api.apiClient.pin.add)
+const ipfsPinRm = promisify(ipfsInstance.api.apiClient.pin.rm)
 
 const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
