@@ -111,13 +111,19 @@ function createWindow () {
   })
 }
 
+async function shutdown() {
+  if (startedIpfs) {
+    log.info(`Quitting IPFS...`)
+    await ipfsInstance.stop()
+  }
+  log.info(`Quitting...`)
+  app.quit()
+}
+
 app.on('ready', createWindow)
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    if (startedIpfs) {
-      ipfsInstance.stop()
-    }
-    app.quit()
-  }
-})
+if (process.platform === 'darwin') {
+  app.on('will-quit', shutdown)
+} else {
+  app.on('window-all-closed', shutdown)
+}
