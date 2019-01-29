@@ -9,21 +9,8 @@ const IPFS_EXPIRATION = 7
 
 const ipfsInstance = IpfsConnector.getInstance()
 
-// Simple promisified cache for pinning operations
-let promisifiedIpfsPinAdd
-let promisifiedIpfsPinRm
-const ipfsPinAdd = (...args) => {
-  if (!promisifiedIpfsPinAdd) {
-    promisifiedIpfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
-  }
-  return promisifiedIpfsPinAdd(...args)
-}
-const ipfsPinRm = (...args) => {
-  if (!promisifiedIpfsPinRm) {
-    promisifiedIpfsPinRm = promisify(ipfsInstance.api.ipfsApi.pin.add)
-  }
-  return promisifiedIpfsPinRm(...args)
-}
+const ipfsPinAdd = promisify(ipfsInstance.api.ipfsApi.pin.add)
+const ipfsPinRm =  promisify(ipfsInstance.api.ipfsApi.pin.rm)
 
 const ipfsFilter = {
   urls: ['https://localhost:8080/ipfs/*']
