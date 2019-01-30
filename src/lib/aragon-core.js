@@ -4,7 +4,7 @@ const APM = require('@aragon/apm')
 const provider = require('eth-provider')
 const networks = require('./networks')
 
-IPFS_TIMEOUT = 600000 // 10min
+IPFS_TIMEOUT = 60 // 10min
 
 async function getLatestFromRepo (repo, network) {
   const networkConfig = networks[network]
