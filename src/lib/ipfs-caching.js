@@ -26,10 +26,23 @@ async function pinAragonClientForNetwork (newHash, network) {
   const { hash: storedHash } = await storage.get(storageKey)
   if (storedHash !== newHash) {
     log.debug(`Pinning new client hash for ${network}: ${newHash}`)
-    await ipfsPinAdd(newHash)
+
+    try {
+      await ipfsPinAdd(newHash)
+    } catch (e) {
+      log.error(`Could not pin new client hash for ${network}: ${newHash}`)
+      log.error(e)
+      return
+    }
+
     if (storedHash) {
       log.debug(`Removing old client hash for ${network}: ${storedHash}`)
-      await ipfsPinRm(storedHash)
+      try {
+        await ipfsPinRm(storedHash)
+      } catch (e) {
+        log.error(`Could not unpin old client hash for ${network}: ${storedHash}`)
+        log.error(e)
+      }
     }
     await storage.set(storageKey, { hash: newHash })
     log.info(`Pinned new client hash for ${network}: ${newHash}`)
@@ -49,8 +62,13 @@ async function purgeUnusedIpfsResources () {
     const data = await storage.get(key)
     if (data.hash && data.expiration && data.expiration < new Date().getTime()) {
       log.debug(`Purging unused IPFS resource: ${data.hash}`)
-      await ipfsPinRm(data.hash)
-      await storage.delete(key)
+      try {
+        await ipfsPinRm(data.hash)
+        await storage.delete(key)
+      } catch (e) {
+        log.error(`Could not unpin unused IPFS resource: ${data.hash}`)
+        log.error(e)
+      }
     }
   }
   log.info('Purged old IPFS resources')
@@ -62,7 +80,12 @@ function listenAndPinResources () {
     if (path.startsWith('/ipfs/')) {
       const hash = path.split('/')[2]
       if (!(await storage.has(hash))) {
-        await ipfsPinAdd(hash)
+        try {
+          await ipfsPinAdd(hash)
+        } catch (e) {
+          log.error(`Could not pin to new IPFS resource: ${hash}`)
+          log.error(e)
+        }
       }
       await updateExpiration(hash)
       log.info('Pinned new IPFS resource:', hash)

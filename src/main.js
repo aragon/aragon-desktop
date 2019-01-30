@@ -43,31 +43,52 @@ async function start (mainWindow) {
     log.info(`Detected running instance of IPFS ${version ? `(version: ${version.version})` : ''}, no need to start our own`)
   } catch (e) {
     log.info('Could not detect running instance of IPFS, starting it ourselves...')
-    await ipfsInstance.start()
-    startedIpfs = true
+    try {
+      await ipfsInstance.start()
+      startedIpfs = true
+    } catch (e) {
+      log.error('Could not start IPFS instance')
+      log.error(e)
+    }
   }
 
   const pinnedInitial = await storage.get(PINNED_INITIAL_CLIENT_KEY)
   if (!pinnedInitial || !pinnedInitial.isPinned) {
-    // Initial run; pin the bundled Aragon client to the bundled IPFS node
+    // Initial run; try to pin the bundled Aragon client to the bundled IPFS node
     const bundledClientPath = path.join(__dirname, '../assets/aragon-client/main')
-    const bundledClientHashes = await promisify(fs.readdir)(bundledClientPath)
-
-    if (bundledClientHashes.length > 1) {
-      log.warn('App has bundled more than one Aragon client!')
+    let bundledClientHashes
+    try {
+      bundledClientHashes = await promisify(fs.readdir)(bundledClientPath)
+    } catch (e) {
+      log.error(`Could not find bundled Aragon client at ${bundledClientPath}`)
+      log.error(e)
     }
 
-    log.info(`Adding bundled Aragon client (${bundledClientHashes[0]}) to IPFS`)
-    await promisify(ipfsInstance.api.apiClient.util.addFromFs)(
-      path.join(bundledClientPath, bundledClientHashes[0]),
-      { recursive: true }
-    )
-    await pinAragonClientForNetwork(bundledClientHashes[0], 'main')
-    await storage.set(PINNED_INITIAL_CLIENT_KEY, { isPinned: true })
+    if (!Array.isArray(bundledClientHashes)) {
+      log.info('No pre-bundled Aragon client found, skipping initial adding to IPFS')
+    } else {
+      if (bundledClientHashes.length > 1) {
+        log.warn('App appears to have bundled more than one Aragon client, adding the first hash found')
+      }
+
+      try {
+        await promisify(ipfsInstance.api.apiClient.util.addFromFs)(
+          path.join(bundledClientPath, bundledClientHashes[0]),
+          { recursive: true }
+        )
+        log.info(`Added bundled Aragon client (${bundledClientHashes[0]}) to IPFS`)
+      } catch (e) {
+        log.error(`Could not add initial bundled version of Aragon Client (${bundledClientHashes[0]}) to IPFS`)
+        log.error(e)
+      }
+
+      await pinAragonClientForNetwork(bundledClientHashes[0], 'main')
+      await storage.set(PINNED_INITIAL_CLIENT_KEY, { isPinned: true })
+    }
   }
 
-  log.info('Loading Aragon client...')
   const latestClientHash = await loadAragonClient()
+  log.info(`Loading Aragon client (${latestClientHash})...`)
   mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
 
   listenAndPinResources()
@@ -139,7 +160,12 @@ function createWindow () {
 async function shutdown() {
   if (startedIpfs) {
     log.info(`Quitting IPFS...`)
-    await ipfsInstance.stop()
+    try {
+      await ipfsInstance.stop()
+    } catch (e) {
+      log.error('Could not stop IPFS instance on shutdown')
+      log.error(e)
+    }
   }
   log.info(`Quitting...`)
   app.quit()
