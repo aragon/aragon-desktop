@@ -15,7 +15,7 @@ async function getLatestFromRepo (repo, network) {
   }
 
   const apm = APM(
-    new Web3(provider(['direct', 'frame', networkConfig.defaultNode])),
+    new Web3(provider([networkConfig.defaultNode])),
     {
       ensRegistryAddress: networkConfig.ensRegistry,
       ipfs: { host: 'localhost', protocol: 'http', port: 5001 }
