@@ -142,12 +142,12 @@ function createWindow () {
     if (Array.isArray(matchesAragonApp)) {
       // If we're going to a different network for the client, load it from IPFS instead
       const network = matchesAragonApp[1] // Network is the first capture group
-      log.info(`Navigating app to ${network} via IPFS instead`)
 
       // In case it takes a while to pin and load, reset to the loading screen
       mainWindow.loadURL(`file://${path.join(__dirname, '../assets/loading.html')}`)
 
       const latestClientHash = await loadAragonClient(network === 'mainnet' ? 'main' : network)
+      log.info(`Navigating app to ${network} via IPFS instead (${latestClientHash})`)
       mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
     } else {
       // Otherwise, open it in the OS' default browser
