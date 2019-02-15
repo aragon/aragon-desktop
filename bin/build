@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [ -z "$TRAVIS_PULL_REQUEST_SHA"]; then
+if [ -z "$TRAVIS_PULL_REQUEST_SHA" ]; then
   echo "Skipping build on non-PR push"
   exit 0
 fi
@@ -11,7 +11,8 @@ npm run dist -- -ml
 
 # Helpers
 transfer() {
-  curl --progress-bar --upload-file "$1" "https://transfer.sh/$(basename $1)" | tee /dev/null;
+  package=$(echo $(basename $1) | sed "s/ /%20/g") # Poor man's url-encode
+  curl --progress-bar --upload-file "$1" "https://transfer.sh/$package" | tee /dev/null;
 }
 
 function status() {
@@ -33,12 +34,15 @@ function status() {
 # Upload artifacts
 echo "Uploading Mac artifact..."
 artifact=$(transfer "./dist/Aragon Desktop.dmg")
-status macos $artifact
+echo "Uploaded to $artifact"
+status macos "$artifact"
 
 echo "Uploading Linux (snap) artifact..."
 artifact=$(transfer "./dist/Aragon Desktop.snap")
-status snap $artifact
+echo "Uploaded to $artifact"
+status snap "$artifact"
 
 echo "Uploading Linux (AppImage) artifact..."
 artifact=$(transfer "./dist/Aragon Desktop.AppImage")
-status appimage $artifact
+echo "Uploaded to $artifact"
+status appimage "$artifact"
