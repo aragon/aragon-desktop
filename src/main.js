@@ -6,6 +6,7 @@ const fs = require('fs')
 const path = require('path')
 const { promisify } = require('util')
 
+const menu = require('./lib/menu')
 const { getLatestFromRepo } = require('./lib/aragon-core')
 const {
   listenAndPinResources,
@@ -113,7 +114,7 @@ function createWindow () {
     }
   })
 
-  mainWindow.setMenu(null)
+  mainWindow.setMenu(menu)
 
   mainWindowState.manage(mainWindow)
 

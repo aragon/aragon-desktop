@@ -15,3 +15,15 @@ git clone git@github.com:aragon/aragon-desktop
 npm i
 npm start
 ```
+
+Note: if you get an error like the following:
+
+```sh
+App threw an error during load:
+Error: The module './node_modules/scrypt/build/Release/scrypt.node'
+was compiled against a different Node.js version using
+NODE_MODULE_VERSION 67. This version of Node.js requires
+NODE_MODULE_VERSION 64. Please try re-compiling or re-installing
+```
+
+You need to recompile the dependencies with `npm run rebuild`.
