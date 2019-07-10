@@ -6,9 +6,12 @@ const networks = require('./networks')
 
 IPFS_TIMEOUT = 600000 // 10min
 
-async function getLatestFromRepo (repo, network) {
+async function getLatestFromRepo (repo) {
+  const web3 = new Web3(provider())
+  const network = await web3.eth.net.getNetworkType()
+
   const networkConfig = networks[network]
-  if (!networkConfig) {
+  if (!networks[network] && network !== 'local') {
     throw new Error(
       `Could not find network configuration for ${network}. Expected one of: ${Object.keys(networks).join(', ')}`
     )

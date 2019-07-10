@@ -31,9 +31,9 @@ ipfsInstance.setBinPath(ipfsPath)
 const ipfsInitPath = path.join(app.getPath('userData'), 'ipfs-init')
 ipfsInstance.setIpfsFolder(ipfsInitPath)
 
-async function loadAragonClient (network = 'main') {
-  const latestHashForNetwork = await getLatestFromRepo('aragon.aragonpm.eth', network)
-  await pinAragonClientForNetwork(latestHashForNetwork, network)
+async function loadAragonClient () {
+  const latestHashForNetwork = await getLatestFromRepo('aragon.aragonpm.eth')
+  await pinAragonClientForNetwork(latestHashForNetwork)
 
   return latestHashForNetwork
 }
