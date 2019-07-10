@@ -32,10 +32,10 @@ const ipfsInitPath = path.join(app.getPath('userData'), 'ipfs-init')
 ipfsInstance.setIpfsFolder(ipfsInitPath)
 
 async function loadAragonClient () {
-  const latestHashForNetwork = await getLatestFromRepo('aragon.aragonpm.eth')
-  await pinAragonClientForNetwork(latestHashForNetwork)
+  const { hash, network } = await getLatestFromRepo('aragon.aragonpm.eth')
+  await pinAragonClientForNetwork(hash, network)
 
-  return latestHashForNetwork
+  return hash
 }
 
 async function start (mainWindow) {
@@ -147,7 +147,7 @@ function createWindow () {
       // In case it takes a while to pin and load, reset to the loading screen
       mainWindow.loadURL(`file://${path.join(__dirname, '../assets/loading.html')}`)
 
-      const latestClientHash = await loadAragonClient(network === 'mainnet' ? 'main' : network)
+      const latestClientHash = await loadAragonClient()
       log.info(`Navigating app to ${network} via IPFS instead (${latestClientHash})`)
       mainWindow.loadURL(`http://localhost:8080/ipfs/${latestClientHash}`)
     } else {

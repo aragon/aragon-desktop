@@ -18,7 +18,7 @@ async function getLatestFromRepo (repo) {
   }
 
   const apm = APM(
-    new Web3(provider([networkConfig.defaultNode])),
+    web3,
     {
       ensRegistryAddress: networkConfig.ensRegistry,
       ipfs: { host: 'localhost', protocol: 'http', port: 5001 }
@@ -27,7 +27,7 @@ async function getLatestFromRepo (repo) {
 
   const repoDetails = await apm.getLatestVersion(repo, IPFS_TIMEOUT)
   log.info(`Obtained aragomPM latest content for ${repo}:`, repoDetails)
-  return repoDetails.content.location
+  return { hash: repoDetails.content.location, network }
 }
 
 module.exports = { getLatestFromRepo }
