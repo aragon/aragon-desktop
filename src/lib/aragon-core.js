@@ -11,7 +11,7 @@ async function getLatestFromRepo (repo) {
   const network = await web3.eth.net.getNetworkType()
 
   const networkConfig = networks[network]
-  if (!networks[network] && network !== 'local') {
+  if (! networkConfig && network !== 'local') {
     throw new Error(
       `Could not find network configuration for ${network}. Expected one of: ${Object.keys(networks).join(', ')}`
     )
