@@ -15,7 +15,7 @@ git clone https://github.com/aragon/aragon-desktop.git
 ```
 Navigate to the aragon-desktop directory
 ```sh
-cd aragon desktop
+cd aragon-desktop
 npm i
 npm start
 ```
