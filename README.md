@@ -11,7 +11,11 @@ It queries the Ethereum blockchain for the latest version of the app, and then s
 Requires Node v10.x.
 
 ```sh
-git clone git@github.com:aragon/aragon-desktop
+git clone https://github.com/aragon/aragon-desktop.git
+```
+Navigate to the aragon-desktop directory
+```sh
+cd aragon desktop
 npm i
 npm start
 ```
