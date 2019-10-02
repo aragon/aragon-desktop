@@ -7,7 +7,11 @@ const networks = require('./networks')
 IPFS_TIMEOUT = 600000 // 10min
 
 async function getLatestFromRepo (repo) {
-  const web3 = new Web3(provider())
+  const web3 = new Web3(provider([
+    'frame',
+    'direct',
+    'wss://mainnet.eth.aragon.network/ws'
+  ]))
   const network = await web3.eth.net.getNetworkType()
 
   const networkConfig = networks[network]
