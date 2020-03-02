@@ -1,10 +1,10 @@
 # Configuration for https://probot.github.io/apps/welcome
 
 newIssueWelcomeComment: >
-  Thanks for opening your first issue in the Aragon desktop repo! Unfortunately this project is uncurrently unmaintained and is looking for active contributors to improve it.
+  Thanks for opening your first issue in the Aragon desktop repo! Unfortunately this project is currently unmaintained and is looking for active contributors to improve it.
 
 newPRWelcomeComment: >
-  Thanks for opening this pull request! Unfortunately this project is uncurrently unmaintained and is looking for active contributors to improve it.
+  Thanks for opening this pull request! Unfortunately this project is currently unmaintained and is looking for active contributors to improve it.
 
 firstPRMergeComment: >
   Congrats on merging your first pull request! Aragon is proud of you 🦅
