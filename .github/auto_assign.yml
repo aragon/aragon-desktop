@@ -3,9 +3,8 @@
 addReviewers: true
 addAssignees: false
 
-reviewers: 
+reviewers:
   - sohkai
-  - 0x6431346e
 
 skipKeywords:
   - wip
