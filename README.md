@@ -1,5 +1,9 @@
 # Aragon Desktop <img align="right" src="https://github.com/aragon/design/blob/master/readme-logo.png" height="80px" />
 
+> 🚨 This project is not actively maintained anymore. Please use the web versions at [mainnet.aragon.org](https://mainnet.aragon.org/) or [rinkeby.aragon.org](https://rinkeby.aragon.org/)
+
+> 💻 If you would like to maintain this project, please reach out by filing an issue!
+
 Aragon Desktop is an Electron app that runs the Aragon client in a fully decentralized way.
 
 It queries the Ethereum blockchain for the latest version of the app, and then serves it over a local IPFS node.
