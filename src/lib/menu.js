@@ -20,7 +20,7 @@ const template = [
     submenu: [{
       label: 'Join the chat',
       click () {
-        shell.openExternal('https://aragon.chat')
+        shell.openExternal('https://spectrum.chat/aragon')
       }
     }, {
       label: 'Suggest a new feature',
